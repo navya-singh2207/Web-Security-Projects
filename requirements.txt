@@ -1,0 +1,5 @@
+Flask==3.0.3
+bleach==6.1.0
+itsdangerous==2.2.0
+markupsafe==2.1.5
+Werkzeug==3.0.3

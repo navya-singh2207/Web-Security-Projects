@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="intro">
+    <h2>Choose a Lab</h2>
+    <p>
+        Use this browser to walk through each CSET365 lab. Every page adapts to the current security
+        level (Low, Medium, High) so you can demonstrate attacks and then show how mitigations work.
+    </p>
+</section>
+<section class="labs-grid">
+    {% for lab in labs %}
+        <article class="lab-card">
+            <h3>{{ lab.title }}</h3>
+            <p class="lab-id">{{ lab.id }}</p>
+            <p>
+                Explore how {{ lab.title }} behaves under
+                <strong>{{ level.title() }}</strong> security.
+            </p>
+            <a class="btn" href="{{ url_for(lab.endpoint) }}">
+                Launch
+            </a>
+        </article>
+    {% endfor %}
+</section>
+{% endblock %}
+

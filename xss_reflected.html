@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="lab-header">
+    <h2>Lab 04 — Reflected XSS</h2>
+    <p id="lab-code">CSET365_Lab4</p>
+    <p>Compare immediate payload reflection (Low) with encoding + CSP (Medium/High).</p>
+</section>
+
+<section class="lab-grid">
+    <div class="panel">
+        <h3>Echo Form</h3>
+        <form method="get" action="{{ url_for('xss_reflected') }}">
+            <label>Message
+                <input type="text" name="message" value="{{ raw }}">
+            </label>
+            <button type="submit">Reflect</button>
+        </form>
+        <div class="note">
+            <p><strong>Suggested payload:</strong> "><script>alert(1)</script></p>
+        </div>
+    </div>
+    <div class="panel">
+        <h3>Reflection Surface</h3>
+        <div class="reflected-output">
+            {{ payload }}
+        </div>
+        {% if level != 'low' and csp_nonce %}
+            <script nonce="{{ csp_nonce }}">
+                console.info("Nonce '{{ csp_nonce }}' applied. Inline scripts require it.");
+            </script>
+        {% endif %}
+        {% if level != 'low' %}
+            <p class="note">
+                Output encoded with Jinja auto-escaping and protected by nonce-based CSP.
+            </p>
+        {% else %}
+            <p class="warning">Raw reflection! View source to see the injection point.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+

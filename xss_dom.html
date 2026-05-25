@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="lab-header">
+    <h2>Lab 06 — DOM-Based XSS</h2>
+    <p id="lab-code">CSET365_Lab6</p>
+    <p>Observe how client-side sinks behave when fed by <code>location.hash</code> or <code>location.search</code>.</p>
+</section>
+
+<section class="lab-grid">
+    <div class="panel">
+        <h3>Instructions</h3>
+        <ol>
+            <li>Append <code>#Hello</code> or <code>#&lt;img src=x onerror=alert(1)&gt;</code> to the URL.</li>
+            <li>Low security uses <code>innerHTML</code>, making script execution trivial.</li>
+            <li>Medium/High switch to <code>textContent</code> + Trusted Types enforcement.</li>
+        </ol>
+    </div>
+    <div class="panel">
+        <h3>DOM Output</h3>
+        <p id="dom-output" class="dom-output">Waiting for hash...</p>
+        <p class="note">Current Level: <strong>{{ level.title() }}</strong></p>
+    </div>
+</section>
+
+<script src="{{ url_for('static', filename='js/domLab.js') }}" defer></script>
+{% endblock %}
+

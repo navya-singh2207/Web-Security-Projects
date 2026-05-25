@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="lab-header">
+    <h2>Lab 03 — Brute Force & Rate Limiting</h2>
+    <p id="lab-code">CSET365_Lab3</p>
+    <ul class="lab-notes">
+        <li>Low: No throttling, direct password checks, verbose errors.</li>
+        <li>Medium: Session rate limiting (5 attempts/min) + uniform errors.</li>
+        <li>High: Adds IP-aware limiter, captcha, and subtle responses.</li>
+    </ul>
+</section>
+
+<section class="lab-grid">
+    <div class="panel">
+        <h3>Login Portal</h3>
+        <form method="post" action="{{ url_for('lab_login') }}">
+            <label>Username
+                <input type="text" name="username" placeholder="student">
+            </label>
+            <label>Password
+                <input type="password" name="password" placeholder="letmein123">
+            </label>
+            {% if level != 'low' %}
+                <label>Captcha: {{ captcha.question }}
+                    <input type="text" name="captcha_answer" autocomplete="off">
+                </label>
+            {% endif %}
+            <button type="submit">Sign in</button>
+        </form>
+    </div>
+    <div class="panel">
+        <h3>Signals & Telemetry</h3>
+        <p><strong>Security Level:</strong> {{ level.title() }}</p>
+        {% if message %}
+            <p class="result {{ 'success' if success else 'failure' }}">{{ message }}</p>
+        {% endif %}
+        {% if throttled %}
+            <p class="warning">Rate limiter engaged. Wait a minute before retrying.</p>
+        {% endif %}
+        {% if level != 'low' %}
+            <div>
+                <h4>Recent Attempts (Session)</h4>
+                <ul class="attempts">
+                    {% for ts in attempts %}
+                        <li>{{ ts|round(3) }}</li>
+                    {% else %}
+                        <li>No attempts logged</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <p>Use tooling to observe response codes, lengths, and headers.</p>
+    </div>
+</section>
+{% endblock %}
+
