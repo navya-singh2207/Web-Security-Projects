@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="lab-header">
+    <h2>Lab 05 — Stored XSS</h2>
+    <p id="lab-code">CSET365_Lab5</p>
+    <ul class="lab-notes">
+        <li>Low: Comments stored & rendered without escaping.</li>
+        <li>Medium: Escaped output, minimal sanitization.</li>
+        <li>High: Bleach sanitization + CSP.</li>
+    </ul>
+</section>
+
+<section class="lab-grid">
+    <div class="panel">
+        <h3>Leave a Comment</h3>
+        <form method="post" action="{{ url_for('xss_stored') }}">
+            <label>Display Name
+                <input type="text" name="author" placeholder="guest">
+            </label>
+            <label>Comment
+                <textarea name="comment" rows="4" placeholder="<script>alert('stored')</script>"></textarea>
+            </label>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <div class="panel">
+        <h3>Comment Wall</h3>
+        <ul class="comments">
+            {% for item in comments %}
+                <li>
+                    <p class="meta">{{ item.author }} — {{ item.timestamp }}</p>
+                    <div class="comment-body">{{ item.content }}</div>
+                </li>
+            {% else %}
+                <li>No comments yet. Be the first to test the sink.</li>
+            {% endfor %}
+        </ul>
+        {% if level == 'low' %}
+            <p class="warning">Scripts will persist and execute for everyone.</p>
+        {% else %}
+            <p class="note">Sanitized output renders as text, CSP blocks inline scripts.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
