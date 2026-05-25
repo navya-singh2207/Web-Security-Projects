@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title or "Web Security Lab Browser" }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body data-level="{{ level }}">
+    <header>
+        <div class="header-top">
+            <div class="branding">
+                <a href="{{ url_for('index') }}" class="home-link" aria-label="Back to dashboard">← Home</a>
+                <div>
+                    <h1>Web Security Lab Browser</h1>
+                    <p>Teaching-focused playground for CSET365 labs</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <form action="{{ url_for('set_level') }}" method="post" class="level-switcher">
+                    <label for="level">Security Level:</label>
+                    <select name="level" id="level" onchange="this.form.submit()">
+                        {% for option in ('low', 'medium', 'high') %}
+                            <option value="{{ option }}" {% if level == option %}selected{% endif %}>
+                                {{ option.title() }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <noscript><button type="submit">Apply</button></noscript>
+                </form>
+            </div>
+        </div>
+        <nav class="lab-nav">
+            <a class="lab-link nav-home {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+                <span class="lab-code">🏠</span>
+                <span class="lab-title">Home</span>
+            </a>
+            {% for lab in nav_labs %}
+                <a class="lab-link {% if request.endpoint == lab.endpoint %}active{% endif %}" href="{{ url_for(lab.endpoint) }}">
+                    <span class="lab-code">{{ lab.id }}</span>
+                    <span class="lab-title">{{ lab.title }}</span>
+                </a>
+            {% endfor %}
+        </nav>
+    </header>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-container">
+                {% for category, msg in messages %}
+                    <div class="flash {{ category }}">{{ msg }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <small>Switch between security levels to observe defenses evolve from vulnerable (Low) to hardened (High).</small>
+    </footer>
+</body>
+</html>
